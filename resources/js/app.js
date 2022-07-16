@@ -34,14 +34,9 @@ const app = new Vue({
     el: '#app',
     router,
     mounted () {
-        user.methods.checkAuth();
-        if (!user.data.isUserAuth) {
-            let nowLink = this.$route.path;
-            if (nowLink != '/register' && nowLink != 'authorization') {
-                this.$router.push('/authorization');
-            }
-
-            console.log(nowLink);
+        if (localStorage.getItem('authorized') !== 'true' && this.$route.path !== '/register' && this.$route.path !== '/authorization') {
+            this.$router.push('/authorization')
+                .then(r => {});
         }
     }
 });

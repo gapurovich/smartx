@@ -1,33 +1,45 @@
 <template>
     <aside id="leftsidebar" class="sidebar">
-        <div class="navbar-brand">
-            <button class="btn-menu ls-toggle-btn" type="button"><i class="zmdi zmdi-menu"></i></button>
-            <a href="index.php"><!--span class="m-l-10">Smart <span style="color:#">X</span> Invest</span--><img width="150px" src="/assets/img/black_flogo.svg" alt="MeeMoney"><!--span class="m-l-10">Aero</span--></a>
-        </div>
-        <div class="menu">
-            <ul class="list">
-                <li>
-                    <div class="user-info">
-                        <a class="image" href="profile"><img src="/assets/images/profile_av.jpg" alt="User"></a>
-                        <div class="detail">
-                            <h4>User</h4>
-                            <small></small>
+        <div>
+            <div class="navbar-brand">
+                <button class="btn-menu ls-toggle-btn" type="button"><i class="zmdi zmdi-menu"></i></button>
+                <a href="index.php"><!--span class="m-l-10">Smart <span style="color:#">X</span> Invest</span--><img width="150px" src="/assets/img/black_flogo.svg" alt="MeeMoney"><!--span class="m-l-10">Aero</span--></a>
+            </div>
+            <div class="menu">
+                <ul class="list">
+                    <li>
+                        <div class="user-info">
+                            <a class="image" href="profile"><img src="/assets/images/profile_av.jpg" alt="User"></a>
+                            <div class="detail">
+                                <h4>{{ user.name }}</h4>
+                                <small>{{ user.email }}</small>
+                            </div>
                         </div>
-                    </div>
-                </li>
+                    </li>
 
-                <li v-for="link in links">
-                    <router-link :to="link.href"><i :class="link.icon"></i><span> {{ link.title }}</span></router-link>
-                </li>
-            </ul>
+                    <li v-for="link in links">
+                        <router-link :to="link.href"><i :class="link.icon"></i><span> {{ link.title }}</span></router-link>
+                    </li>
+                </ul>
+            </div>
         </div>
     </aside>
 </template>
 
 <script>
+import user from '../../api/auth/user';
+
 export default {
-    data () {
+    mounted() {
+        user.methods.getInfo();
+    },
+
+    data: function() {
         return {
+            user: {
+                name: '123',
+                old: '123'
+            },
             links: [
                 {
                     title: 'Главная',
