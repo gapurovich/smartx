@@ -1,22 +1,20 @@
 export default {
-    data: {
-        isUserAuth: false        
+    data: function() {
+        return {
+            isUserAuth: false
+        }
     },
 
     methods: {
-        checkAuth: function () {
+        getInfo: function () {
             axios
-                .post('/api/auth/check')
+                .get('/api/auth/user-profile')
                 .then(user => {
-                    if (user.data === '') {
-                        console.log('Not authorized');
-                        this.isUserAuth = false;
-                    } else {
-                        this.isUserAuth = true;
-                    }
+                    console.log(user);
+                })
+                .catch(error => {
+                    console.log(error.response.data);
                 });
-
-            return this.isUserAuth;
         }
     }
 }

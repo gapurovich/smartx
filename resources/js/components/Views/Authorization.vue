@@ -1,17 +1,17 @@
 <template class="theme-red ls-closed op0">
-    <div class="section">
+    <div class="section authorization-wrapper">
         <div class="mask"></div>
         <form action="login">
             <h2>Вход в панель</h2>
 
             <div class="form__group" style="margin-top: 15px;">
                 <label for="login">Логин</label>
-                <input type="text" id="login" name="login" v-model="$data.email">
+                <input type="text" id="login" name="login" v-model="$data.email" onchange="document.getElementById('login').classList.remove('error')">
             </div>
 
             <div class="form__group">
                 <label for="password">Пароль</label>
-                <input type="password" id="password" name="password" v-model="$data.password">
+                <input type="password" id="password" name="password" v-model="$data.password" onchange="document.getElementById('password').classList.remove('error')">
             </div>
 
             <div class="form__group">
@@ -53,6 +53,13 @@ export default {
         }
     },
 
+    mounted() {
+        if (localStorage.getItem('authorized') === 'true') {
+            console.log('Already authorized');
+            this.$router.push('/');
+        }
+    },
+
     methods: {
         auth: function (email, password) {
             console.log(email + ':' + password);
@@ -65,12 +72,30 @@ export default {
                     }
                 })
                 .then(data => {
-                    if (data.status === 200) {
-                        console.log('Success!');
-                    }
+                    localStorage.setItem('authorized', true);
+                    localStorage.setItem('token', data.data.access_token);
+                    this.$router.push('/');
                 })
                 .catch(error => {
-                    this.message = 'Упс, что-то пошло не так...';
+                    let errorData = error.response.data;
+                    console.log(errorData);
+
+                    if (errorData.email !== undefined) {
+                        console.log('Email error');
+                        document.getElementById('login').classList.add('error');
+                    }
+
+                    if (errorData.password !== undefined) {
+                        console.log('Password error');
+                        document.getElementById('password').classList.add('error');
+                    }
+
+                    if (errorData.error !== undefined) {
+                        console.log('Not found');
+                        document.getElementById('login').classList.add('error');
+                        document.getElementById('password').classList.add('error');
+                        alert('Неверно введены логин и/или пароль.');
+                    }
                 });
 
         }
@@ -78,9 +103,17 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
     .sidebar {
         display: none !important;
+    }
+
+    .authorization-wrapper {
+        height: 100%; width: 100%;
+        background: #fff;
+        z-index: 100000;
+        position: fixed;
+        top: 0; left: 0;
     }
 
 @import url('https://fonts.googleapis.com/css2?family=PT+Sans:ital,wght@0,400;0,700;1,400;1,700&display=swap');
@@ -93,7 +126,6 @@ export default {
         position: fixed !important;
         margin-top: -200px !important;
         width:100% !important;
-
     }
 }
 
@@ -107,6 +139,10 @@ body{
 
 * {
     box-sizing: border-box;
+}
+
+input.error {
+    border-color: red;
 }
 
 .form__group p{
